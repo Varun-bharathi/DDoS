@@ -26,7 +26,7 @@
 # #     st.metric("Detected Attacks", "255K")
 
 # # with col3:
-# #     st.metric("Benign Traffic", "51K")
+# #     st.metric("Normal Traffic", "51K")
 
 # # with col4:
 # #     st.metric("Model Accuracy", "99.97%")
@@ -64,7 +64,7 @@
 # #             predictions = model.predict(X)
 
 # #             attack_count = int(sum(predictions))
-# #             benign_count = len(predictions) - attack_count
+# #             Normal_count = len(predictions) - attack_count
 
 # #             # Isolation Forest Prediction
 # #             anomaly_predictions = anomaly_model.predict(X)
@@ -86,8 +86,8 @@
 
 # #             with col2:
 # #                 st.metric(
-# #                     "Benign Records",
-# #                     benign_count
+# #                     "Normal Records",
+# #                     Normal_count
 # #                 )
 
 # #             with col3:
@@ -97,10 +97,10 @@
 # #                 )
 
 # #             # Detection Status
-# #             if attack_count > benign_count:
+# #             if attack_count > Normal_count:
 # #                 st.error("⚠️ DDoS Attack Detected")
 # #             else:
-# #                 st.success("✅ Mostly Benign Traffic")
+# #                 st.success("✅ Mostly Normal Traffic")
 
 # #             # Risk Score
 # #             risk_score = (
@@ -174,7 +174,7 @@
 #     st.metric("Detected Attacks", "255K")
 
 # with col3:
-#     st.metric("Benign Traffic", "51K")
+#     st.metric("Normal Traffic", "51K")
 
 # with col4:
 #     st.metric("Model Accuracy", "99.97%")
@@ -231,7 +231,7 @@
 #             predictions = model.predict(X)
 
 #             attack_count = int(sum(predictions))
-#             benign_count = len(predictions) - attack_count
+#             Normal_count = len(predictions) - attack_count
 
 #             # =========================
 #             # Isolation Forest
@@ -259,8 +259,8 @@
 
 #             with c2:
 #                 st.metric(
-#                     "Benign Records",
-#                     benign_count
+#                     "Normal Records",
+#                     Normal_count
 #                 )
 
 #             with c3:
@@ -273,10 +273,10 @@
 #             # Detection Status
 #             # =========================
 
-#             if attack_count > benign_count:
+#             if attack_count > Normal_count:
 #                 st.error("⚠️ DDoS Attack Detected")
 #             else:
-#                 st.success("✅ Mostly Benign Traffic")
+#                 st.success("✅ Mostly Normal Traffic")
 
 #             # =========================
 #             # Risk Score
@@ -321,12 +321,12 @@
 #             chart_df = pd.DataFrame({
 #                 "Category": [
 #                     "Attack",
-#                     "Benign",
+#                     "Normal",
 #                     "Anomaly"
 #                 ],
 #                 "Count": [
 #                     attack_count,
-#                     benign_count,
+#                     Normal_count,
 #                     anomaly_count
 #                 ]
 #             })
@@ -403,7 +403,7 @@ import datetime
 
 def create_pdf_report(
     attack_count,
-    benign_count,
+    Normal_count,
     anomaly_count,
     risk_score,
     risk_level
@@ -437,7 +437,7 @@ def create_pdf_report(
     pdf.cell(
         200,
         10,
-        f"Benign Records: {benign_count}",
+        f"Normal Records: {Normal_count}",
         ln=True
     )
 
@@ -497,7 +497,7 @@ with col2:
     st.metric("Detected Attacks", "255K")
 
 with col3:
-    st.metric("Benign Traffic", "51K")
+    st.metric("Normal Traffic", "51K")
 
 with col4:
     st.metric("Model Accuracy", "99.97%")
@@ -554,7 +554,7 @@ if uploaded_file is not None:
             predictions = model.predict(X)
 
             attack_count = int(predictions.sum())
-            benign_count = len(predictions) - attack_count
+            Normal_count = len(predictions) - attack_count
 
             # Isolation Forest
             anomaly_predictions = anomaly_model.predict(X)
@@ -579,8 +579,8 @@ if uploaded_file is not None:
 
             with c2:
                 st.metric(
-                    "Benign Records",
-                    benign_count
+                    "Normal Records",
+                    Normal_count
                 )
 
             with c3:
@@ -593,10 +593,10 @@ if uploaded_file is not None:
             # Detection Status
             # =====================================
 
-            if attack_count > benign_count:
+            if attack_count > Normal_count:
                 st.error("⚠️ DDoS Attack Detected")
             else:
-                st.success("✅ Mostly Benign Traffic")
+                st.success("✅ Mostly Normal Traffic")
 
             # =====================================
             # Risk Score
@@ -643,12 +643,12 @@ if uploaded_file is not None:
             chart_df = pd.DataFrame({
                 "Category": [
                     "Attack",
-                    "Benign",
+                    "Normal",
                     "Anomaly"
                 ],
                 "Count": [
                     attack_count,
-                    benign_count,
+                    Normal_count,
                     anomaly_count
                 ]
             })
@@ -747,8 +747,8 @@ if uploaded_file is not None:
                 "Attack Count": [
                     attack_count
                 ],
-                "Benign Count": [
-                    benign_count
+                "Normal Count": [
+                    Normal_count
                 ],
                 "Anomaly Count": [
                     anomaly_count
@@ -788,7 +788,7 @@ if uploaded_file is not None:
 
             pdf_path = create_pdf_report(
                 attack_count,
-                benign_count,
+                Normal_count,
                 anomaly_count,
                 risk_score,
                 risk_level

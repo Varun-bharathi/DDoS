@@ -59,7 +59,7 @@ X = batch.drop(
 predictions = model.predict(X)
 
 attack_count = int(predictions.sum())
-benign_count = len(predictions) - attack_count
+Normal_count = len(predictions) - attack_count
 
 # Isolation Forest
 anomaly_predictions = anomaly_model.predict(X)
@@ -92,8 +92,8 @@ with c2:
 
 with c3:
     st.metric(
-        "Benign Records",
-        benign_count
+        "Normal Records",
+        Normal_count
     )
 
 with c4:
@@ -103,7 +103,7 @@ with c4:
     )
 
 # Status
-if attack_count > benign_count:
+if attack_count > Normal_count:
     st.error(
         "⚠️ DDoS Attack Detected"
     )
@@ -127,12 +127,12 @@ st.write(
 chart_df = pd.DataFrame({
     "Category": [
         "Attack",
-        "Benign",
+        "Normal",
         "Anomaly"
     ],
     "Count": [
         attack_count,
-        benign_count,
+        Normal_count,
         anomaly_count
     ]
 })

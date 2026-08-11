@@ -8,7 +8,7 @@ df = pd.read_parquet("data/combined_dataset.parquet")
 
 # Convert labels
 df["Label"] = df["Label"].apply(
-    lambda x: 0 if x == "Benign" else 1
+    lambda x: 0 if x == "Normal" else 1
 )
 
 # Features and target
