@@ -8,6 +8,7 @@ The system integrates:
 - **XGBoost Classifier** for attack detection and classification.
 - **Isolation Forest** for unknown anomaly detection.
 - **Explainable AI (XAI)** via feature importance analysis.
+- **Simulated Live Monitoring Engine** for real-time streaming traffic analysis.
 - **Interactive Streamlit Dashboard** for real-time traffic analysis and risk visualization.
 - **Risk Assessment Engine** to compute composite security risk levels.
 - **Detection History Tracking** for auditing past scans.
@@ -22,6 +23,7 @@ The system analyzes network traffic datasets, identifies malicious DDoS attacks 
 - **DDoS Attack Detection:** Accurately identify attack patterns in high-volume network traffic.
 - **Traffic Classification:** Categorize records as **Benign** or **Attack**.
 - **Anomaly Detection:** Flag novel or unseen zero-day network anomalies.
+- **Simulated Live Streaming:** Stream network flows to showcase real-time threat detection.
 - **Risk Assessment:** Provide a unified risk score and risk level assessment.
 - **Visual Analytics:** Offer interactive charts and data distribution previews.
 - **Audit & History:** Store past detection logs locally for historical reporting.
@@ -114,6 +116,7 @@ ddos-project/
 │   └── risk_engine.py             # Risk calculation helper
 │
 ├── app.py                         # Main Streamlit web dashboard application
+├── live_monitor.py                # Standalone live streaming monitoring script
 ├── requirements.txt               # Python package dependencies
 └── README.md                      # Project documentation
 ```
@@ -207,6 +210,119 @@ $$\text{Risk Score} = \left(\frac{\text{Attack Count}}{\text{Total Records}} \ti
 
 ---
 
+## 🔴 Simulated Live Monitoring
+
+### Overview
+The project includes a **Simulated Live Monitoring Module** that mimics real-time network traffic analysis using historical data from the **CIC-DDoS2019** dataset.
+
+Instead of intercepting live network packets via hardware interfaces, the system continuously reads records row-by-row from the dataset and feeds them into the trained machine learning pipeline. This simulates live network traffic streaming and dynamic dashboard updates.
+
+---
+
+### Why Simulated Monitoring?
+
+Full real-time packet capture typically requires:
+- Deep packet inspection tools (**Wireshark**, **Scapy**, **PyShark**).
+- **Administrator / Root Privileges** for raw socket access.
+- Live active network traffic on dedicated network interface cards (NICs).
+
+For project demonstrations, research presentations, and academic viva evaluations, **Simulated Live Monitoring** provides the exact same operational workflow and dashboard metrics without requiring complex network configurations or elevated permissions.
+
+---
+
+### Working Principle & Flow
+
+```text
+               ┌─────────────────────────┐
+               │    Historical Dataset   │
+               └────────────┬────────────┘
+                            │
+                            ▼
+               ┌─────────────────────────┐
+               │    Read Next Record     │
+               └────────────┬────────────┘
+                            │
+                            ▼
+               ┌─────────────────────────┐
+               │   XGBoost Prediction    │
+               │   (Attack vs Benign)    │
+               └────────────┬────────────┘
+                            │
+                            ▼
+               ┌─────────────────────────┐
+               │ Isolation Forest Check  │
+               │  (Anomaly Detection)    │
+               └────────────┬────────────┘
+                            │
+                            ▼
+               ┌─────────────────────────┐
+               │ Dynamic Risk Assessment │
+               └────────────┬────────────┘
+                            │
+                            ▼
+               ┌─────────────────────────┐
+               │ Dashboard Metrics Sync  │
+               └────────────┬────────────┘
+                            │
+                            └────► Repeat for Next Record
+```
+
+---
+
+### Model Components & Prediction Logic
+
+1. **XGBoost Classifier:**
+   - Evaluates flow features and outputs class label:
+     - `0` $\rightarrow$ **Benign Traffic**
+     - `1` $\rightarrow$ **DDoS Attack**
+
+2. **Isolation Forest:**
+   - Detects statistical distribution anomalies:
+     - `1` $\rightarrow$ **Normal Flow**
+     - `-1` $\rightarrow$ **Anomaly Detected**
+
+3. **Streamlit Dashboard Telemetry:**
+   - Updates live packet count, attack percentage, benign count, anomaly count, composite risk score, and real-time activity logs.
+
+---
+
+### Live Risk Calculation
+
+As streaming records are processed, the **Risk Assessment Engine** continuously updates the risk score:
+
+$$\text{Risk Score} = \left(\text{Attack Percentage} \times 0.70\right) + \left(\text{Anomaly Percentage} \times 0.30\right)$$
+
+#### Example Calculation:
+If a stream of records results in **80% Attack Records** and **20% Anomalies**:
+$$\text{Risk Score} = (80 \times 0.70) + (20 \times 0.30) = 56 + 6 = 62\% \quad \Rightarrow \quad \text{🟠 High Risk}$$
+
+#### Real-Time Status Alerts:
+- ⚠️ **DDoS Attack Detected:** Triggered when attack volume spikes.
+- ✅ **Traffic Normal:** Displayed when benign traffic dominates.
+
+---
+
+### Key Advantages
+
+- ✔ **Real-Time Simulation:** Demonstrates streaming traffic ingestion and dynamic threat detection.
+- ✔ **Zero Dependency on Raw Sockets:** No Wireshark or Scapy network sniffing required.
+- ✔ **No Admin Rights Required:** Runs seamlessly in standard user environments.
+- ✔ **Easy Demonstration:** Ideal for viva, academic presentations, and quick prototyping.
+
+---
+
+### Future Upgrade Path to Native Real-Time Capture
+
+The simulated streaming architecture is designed to be fully modular, allowing seamless upgrades to live packet capture using:
+- **PyShark (`pyshark`)** or **Scapy (`scapy.all.sniff`)** attached to Wi-Fi or Ethernet interfaces.
+- **Real-Time Packet Dissector:** Extracts 77 flow features live from captured PCAP frames.
+
+```text
+Live Packets ──► Feature Extractor ──► XGBoost + Isolation Forest ──► Risk Engine ──► Alert & Block
+```
+
+---
+
 ## 🚀 Installation & Setup
 
 ### 1. Clone the Repository
@@ -242,6 +358,12 @@ Run the Streamlit web dashboard:
 streamlit run app.py
 ```
 
+### Step 3: Run Live Monitoring Module (Optional)
+To execute the streaming live monitoring module:
+```bash
+python live_monitor.py
+```
+
 Open your browser and navigate to:
 ```text
 http://localhost:8501
@@ -255,8 +377,9 @@ http://localhost:8501
 2. **Preview Data:** Verify dataset columns and record counts.
 3. **Run Detection:** Click **🚀 Detect Attack** to execute predictions.
 4. **View Metrics:** Review classified traffic counts, anomaly flags, and the composite risk score.
-5. **Analyze Charts:** Inspect pie charts, risk bar charts, and feature importance graphs.
-6. **Download Report:** Click **⬇ Download PDF Report** to save a timestamped summary.
+5. **Simulate Live Stream:** Monitor real-time streaming traffic telemetry.
+6. **Analyze Charts:** Inspect pie charts, risk bar charts, and feature importance graphs.
+7. **Download Report:** Click **⬇ Download PDF Report** to save a timestamped summary.
 
 ---
 
