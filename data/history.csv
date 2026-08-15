@@ -18,3 +18,7 @@ Timestamp,Attack Count,Normal Count,Anomaly Count,Risk Score,risk_level,mitigati
 2026-08-15 20:32:35.640359,254803,51398,15302,59.75,High,Block Suspicious Traffic
 2026-08-15 20:32:57.221984,254803,51398,15302,59.75,High,Block Suspicious Traffic
 2026-08-15 20:33:29.192515,254803,51398,15302,59.75,High,Block Suspicious Traffic
+2026-08-15 20:49:07.340950,254803,51398,15302,59.75,High,Block Suspicious Traffic
+2026-08-15 20:49:21.046566,2403,4312,1750,32.87,Medium,Rate Limiting
+2026-08-15 21:05:44.490981,2403,4312,1750,32.87,Medium,Rate Limiting
+2026-08-15 21:12:41.312320,704,4401,933,15.14,Low,Monitor Traffic

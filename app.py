@@ -544,6 +544,12 @@ if uploaded_file is not None:
     else:
         df = pd.read_parquet(uploaded_file)
 
+    # Save uploaded dataset & filename as active target for live_monitor.py immediately
+    os.makedirs("data", exist_ok=True)
+    df.to_parquet("data/active_target.parquet", index=False)
+    with open("data/active_target_name.txt", "w", encoding="utf-8") as f:
+        f.write(uploaded_file.name)
+
     # =====================================
     # Preview
     # =====================================
@@ -561,6 +567,8 @@ if uploaded_file is not None:
     if st.button("🚀 Detect Attack"):
 
         try:
+
+            st.info(f"📡 Dataset **{uploaded_file.name}** set as active target for `live_monitor.py`.")
 
             X = df.drop(
                 "Label",
