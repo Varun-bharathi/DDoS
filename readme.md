@@ -1,7 +1,7 @@
 # 🛡️ Explainable Hybrid Machine Learning Framework for DDoS Detection
 
 ## 📌 Project Overview
-This project is an intelligent **DDoS (Distributed Denial of Service) Detection & Mitigation System** that combines supervised classification, unsupervised anomaly detection, explainable AI, and adaptive defense mechanisms to protect network infrastructure.
+This project is an intelligent **DDoS (Distributed Denial of Service) Detection & Mitigation System** that combines supervised classification, unsupervised anomaly detection, explainable AI, adaptive defense mechanisms, and simulated live stream monitoring to protect network infrastructure.
 
 The system integrates:
 - **XGBoost Classifier** for attack detection and classification.
@@ -10,10 +10,11 @@ The system integrates:
 - **Interactive Streamlit Dashboard** for real-time traffic analysis and risk visualization.
 - **Risk Assessment Engine** to compute composite security risk levels.
 - **Adaptive Mitigation Engine** to dynamically determine defense actions based on risk levels.
+- **Dynamic Live Monitoring Engine (`live_monitor.py`)** to stream and analyze datasets batch-by-batch in real time.
 - **Detection History Tracking** for auditing past scans with mitigation logs.
 - **PDF Report Generation** for downloadable security summaries including mitigation recommendations.
 
-The system analyzes network traffic datasets, identifies malicious DDoS attacks with high accuracy, provides actionable insights into model decision-making, and recommends automated mitigation strategies.
+The system analyzes network traffic datasets, identifies malicious DDoS attacks with high accuracy, provides actionable insights into model decision-making, recommends automated mitigation strategies, and supports dynamic live monitoring.
 
 ---
 
@@ -23,6 +24,7 @@ The system analyzes network traffic datasets, identifies malicious DDoS attacks 
 - **Anomaly Detection:** Flag novel or unseen zero-day network anomalies.
 - **Risk Assessment:** Provide a unified risk score and risk level assessment.
 - **Adaptive Mitigation:** Recommend and simulate real-time countermeasures (Rate Limiting, Traffic Blocking, Emergency Defense).
+- **Dynamic Live Monitoring:** Stream uploaded datasets in 100-record batches every 2 seconds with live UI filename display.
 - **Visual Analytics:** Offer interactive charts and data distribution previews.
 - **Audit & History:** Store past detection logs and mitigation actions locally for historical reporting.
 - **Report Generation:** Export concise PDF security reports containing telemetry and mitigation details.
@@ -64,6 +66,17 @@ The system analyzes network traffic datasets, identifies malicious DDoS attacks 
                        │ Adaptive Mitigation Engine
                        └────────────┬────────────┘
                                     │
+            ┌───────────────────────┴───────────────────────┐
+            │                                               │
+            ▼                                               ▼
+┌───────────────────────┐                       ┌───────────────────────┐
+│ Main App (app.py)     │                       │ Live Monitor          │
+│ Full Dataset Analysis │                       │ (live_monitor.py)     │
+└───────────┬───────────┘                       │ 2s Batch Streaming    │
+            │                                   └───────────┬───────────┘
+            │                                               │
+            └───────────────────────┬───────────────────────┘
+                                    │
                                     ▼
                        ┌─────────────────────────┐
                        │   Streamlit Dashboard   │
@@ -83,7 +96,7 @@ The system analyzes network traffic datasets, identifies malicious DDoS attacks 
 | Technology | Purpose |
 | :--- | :--- |
 | **Python** | Backend logic and machine learning pipelines |
-| **Streamlit** | Interactive dashboard user interface |
+| **Streamlit** | Interactive dashboard user interface & auto-refreshed live streaming |
 | **Pandas & PyArrow** | High-performance dataset processing and Parquet handling |
 | **XGBoost** | Supervised DDoS attack classification |
 | **Scikit-Learn** | Anomaly detection (`IsolationForest`) & model evaluation metrics |
@@ -99,9 +112,11 @@ The system analyzes network traffic datasets, identifies malicious DDoS attacks 
 ddos-project/
 │
 ├── data/
-│   ├── combined_dataset.parquet   # Processed combined dataset
+│   ├── combined_dataset.parquet   # Processed combined benchmark dataset
+│   ├── active_target.parquet      # Synchronized active target dataset for live_monitor.py
+│   ├── active_target_name.txt     # Stored name of currently uploaded dataset file
 │   ├── history.csv                # Historical detection audit logs (includes risk level & mitigation)
-│   └── *.parquet                  # Raw & subset dataset files
+│   └── *.parquet                  # Raw & subset dataset files (e.g. LDAP-training, TFTP-testing)
 │
 ├── models/
 │   ├── xgboost_ddos_model.pkl     # Trained XGBoost classifier
@@ -117,7 +132,7 @@ ddos-project/
 │   └── mitigation_engine.py       # Adaptive mitigation rule engine
 │
 ├── app.py                         # Main Streamlit web dashboard application
-├── live_monitor.py                # Simulated live network traffic monitor
+├── live_monitor.py                # Simulated live network traffic monitor (synchronized with app.py)
 ├── requirements.txt               # Python package dependencies
 └── README.md                      # Project documentation
 ```
@@ -206,17 +221,24 @@ Determines and displays automated mitigation responses corresponding to the eval
 
 - **Interactive Defense Toggle:** Includes an **"Enable Adaptive Mitigation"** checkbox that simulates real-time defense enforcement and provides active alert status notifications.
 
-### 5. Interactive Visualizations
+### 5. Dynamic Live Stream Monitoring (`live_monitor.py`) 📡
+- **Dataset Synchronization:** Automatically streams whichever dataset file you select in `app.py` (e.g. `LDAP-training.parquet`, `TFTP-testing.parquet`).
+- **UI Filename Header:** Prominently displays the exact name of the file being monitored:
+  `📁 Currently Monitoring File: LDAP-training.parquet (Uploaded File) | 📊 Total Records: 6,715`
+- **Auto-Refresh Streaming:** Streams 100-record batches every 2 seconds.
+- **Batch Adaptive Mitigation:** Evaluates and updates mitigation alert banners dynamically for each streaming batch.
+
+### 6. Interactive Visualizations
 - **Traffic Distribution:** Pie chart breaking down Attack, Normal, and Anomaly traffic.
 - **Risk Score Analysis:** Bar chart displaying the calculated threat score.
 - **Feature Importance Chart:** Horizontal bar chart highlighting top features driving model predictions.
 
-### 6. Detection History Tracking
+### 7. Detection History Tracking
 - Automatically records scan logs into `data/history.csv`.
 - Logs timestamp, attack counts, normal counts, anomaly counts, risk score, **risk level**, and **mitigation action**.
 - Displays recent scan history table in the dashboard.
 
-### 7. PDF Report Generation
+### 8. PDF Report Generation
 - Exports a downloadable `.pdf` summary report containing scan telemetry, risk score, risk level, **mitigation action**, **mitigation description**, and generation timestamp.
 
 ---
@@ -236,7 +258,7 @@ pip install -r requirements.txt
 ```
 *Or manually install individual dependencies:*
 ```bash
-pip install streamlit pandas pyarrow xgboost scikit-learn plotly joblib fpdf
+pip install streamlit pandas pyarrow xgboost scikit-learn plotly joblib fpdf streamlit-autorefresh
 ```
 
 ---
@@ -250,24 +272,28 @@ python src/train_xgboost.py
 python src/anomaly_detection.py
 ```
 
-### Step 2: Launch Dashboard
-Run the Streamlit web dashboard:
+### Step 2: Launch Main Dashboard
+Run the main Streamlit application:
 ```bash
 streamlit run app.py
 ```
-Open your browser and navigate to:
-```text
-http://localhost:8501
+Open your browser and navigate to `http://localhost:8501`.
+
+### Step 3: Launch Live Monitor (Optional)
+Run the simulated live monitoring dashboard in a separate terminal:
+```bash
+streamlit run live_monitor.py
 ```
+Open your browser and navigate to `http://localhost:8502`.
 
 ---
 
 ## 📋 Application Workflow
-1. **Upload Dataset:** Select a network traffic dataset (`.csv` or `.parquet`).
+1. **Upload Dataset:** Select a network traffic dataset (e.g. `LDAP-training.parquet`) in `app.py`.
 2. **Preview Data:** Verify dataset columns and record counts.
-3. **Run Detection:** Click **🚀 Detect Attack** to execute predictions.
-4. **View Metrics:** Review classified traffic counts, anomaly flags, and the composite risk score.
-5. **Review Adaptive Mitigation:** Inspect recommended mitigation actions and toggle **Enable Adaptive Mitigation** to simulate real-time enforcement.
+3. **Run Detection:** Click **🚀 Detect Attack** to execute predictions on the complete dataset.
+4. **Review Adaptive Mitigation:** Inspect recommended mitigation actions and toggle **Enable Adaptive Mitigation** to simulate real-time enforcement.
+5. **Stream Live Traffic:** Open `live_monitor.py` (`streamlit run live_monitor.py`) to watch the uploaded file (`LDAP-training.parquet`) stream live in 100-record batches every 2 seconds with dynamic UI filename tracking.
 6. **Analyze Charts:** Inspect pie charts, risk bar charts, and feature importance graphs.
 7. **Audit Detection History:** Review historical scan records with logged risk levels and mitigation actions.
 8. **Download Report:** Click **⬇ Download PDF Report** to save a timestamped summary including mitigation details.
