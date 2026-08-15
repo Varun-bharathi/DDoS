@@ -378,6 +378,7 @@ import os
 import datetime
 from fpdf import FPDF
 import tempfile
+from src.mitigation_engine import get_mitigation_action  # Integration: Import adaptive mitigation module
 
 # =====================================
 # Page Configuration
@@ -406,7 +407,9 @@ def create_pdf_report(
     Normal_count,
     anomaly_count,
     risk_score,
-    risk_level
+    risk_level,
+    mitigation_action="N/A",
+    mitigation_description="N/A"
 ):
 
     pdf = FPDF()
@@ -459,6 +462,21 @@ def create_pdf_report(
         200,
         10,
         f"Risk Level: {risk_level}",
+        ln=True
+    )
+
+    # Integration Point: Append adaptive mitigation details to the PDF summary report
+    pdf.cell(
+        200,
+        10,
+        f"Mitigation Action: {mitigation_action}",
+        ln=True
+    )
+
+    pdf.cell(
+        200,
+        10,
+        f"Mitigation Description: {mitigation_description}",
         ln=True
     )
 
@@ -635,6 +653,43 @@ if uploaded_file is not None:
                 st.error("🔴 Critical Risk")
 
             # =====================================
+            # Adaptive Mitigation Section
+            # =====================================
+            # Integration Point: Retrieve mitigation parameters based on calculated risk_level
+            mitigation_action, mitigation_description, severity = get_mitigation_action(risk_level)
+
+            st.subheader("⚡ Adaptive Mitigation")
+
+            # Display Risk Level, Recommended Action, and Description in color-coded alert box
+            alert_text = (
+                f"**Risk Level:** {risk_level}\n\n"
+                f"**Recommended Action:** {mitigation_action}\n\n"
+                f"**Description:** {mitigation_description}"
+            )
+
+            if risk_level == "Low":
+                st.success(alert_text)
+            elif risk_level == "Medium":
+                st.warning(alert_text)
+            elif risk_level == "High":
+                st.error(alert_text)
+            else:  # Critical
+                st.error(alert_text)
+
+            # Integration Point: Streamlit checkbox to activate mitigation simulation
+            enable_mitigation = st.checkbox("Enable Adaptive Mitigation")
+
+            if enable_mitigation:
+                if risk_level == "Low":
+                    st.info("ℹ️ Monitoring traffic activity in real-time...")
+                elif risk_level == "Medium":
+                    st.warning("⚡ Rate limiting activated on suspicious traffic.")
+                elif risk_level == "High":
+                    st.error("🚫 Blocking suspicious traffic activated.")
+                else:  # Critical
+                    st.error("🚨 Emergency defense activated! Blocking traffic and triggering security alerts.")
+
+            # =====================================
             # Traffic Distribution Pie Chart
             # =====================================
 
@@ -739,7 +794,7 @@ if uploaded_file is not None:
             # =====================================
             # Detection History
             # =====================================
-
+            # Integration Point: Extend detection history dataframe to log risk_level and mitigation_action
             history = pd.DataFrame({
                 "Timestamp": [
                     datetime.datetime.now()
@@ -755,28 +810,41 @@ if uploaded_file is not None:
                 ],
                 "Risk Score": [
                     round(risk_score, 2)
+                ],
+                "risk_level": [
+                    risk_level
+                ],
+                "mitigation_action": [
+                    mitigation_action
                 ]
             })
 
-            if os.path.exists(
-                "data/history.csv"
-            ):
+            history_file = "data/history.csv"
+            if os.path.exists(history_file):
+                existing_df = pd.read_csv(history_file)
+                # Schema Migration: Ensure existing CSV file includes risk_level and mitigation_action columns
+                if "risk_level" not in existing_df.columns:
+                    existing_df["risk_level"] = "N/A"
+                if "mitigation_action" not in existing_df.columns:
+                    existing_df["mitigation_action"] = "N/A"
+                existing_df.to_csv(history_file, index=False)
+
                 history.to_csv(
-                    "data/history.csv",
+                    history_file,
                     mode="a",
                     header=False,
                     index=False
                 )
             else:
                 history.to_csv(
-                    "data/history.csv",
+                    history_file,
                     index=False
                 )
 
             st.subheader("📜 Detection History")
 
             history_df = pd.read_csv(
-                "data/history.csv"
+                history_file
             )
 
             st.dataframe(
@@ -786,12 +854,15 @@ if uploaded_file is not None:
 
             st.subheader("📄 Download Report")
 
+            # Integration Point: Pass mitigation action and description to PDF report generator
             pdf_path = create_pdf_report(
                 attack_count,
                 Normal_count,
                 anomaly_count,
                 risk_score,
-                risk_level
+                risk_level,
+                mitigation_action,
+                mitigation_description
             )
 
             with open(pdf_path, "rb") as pdf_file:
