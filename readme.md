@@ -1,245 +1,250 @@
-# 🛡️ Explainable Hybrid Machine Learning Framework for DDoS Detection
+# 🛡️ Explainable Hybrid Machine Learning Framework for DDoS Defense & Real-Time Monitoring
 
-## 📌 Project Overview
-This project is an intelligent **DDoS (Distributed Denial of Service) Detection & Mitigation System** that combines supervised classification, unsupervised anomaly detection, explainable AI, adaptive defense mechanisms, and simulated live stream monitoring to protect network infrastructure.
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.40%2B-FF4B4B.svg)](https://streamlit.io/)
+[![XGBoost](https://img.shields.io/badge/XGBoost-2.0%2B-brightgreen.svg)](https://xgboost.readthedocs.io/)
+[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.3%2B-orange.svg)](https://scikit-learn.org/)
+[![SHAP](https://img.shields.io/badge/SHAP-Explainable%20AI-purple.svg)](https://shap.readthedocs.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-The system integrates:
-- **XGBoost Classifier** for attack detection and classification.
-- **Isolation Forest** for unknown anomaly detection.
-- **Explainable AI (XAI)** via feature importance analysis.
-- **Interactive Streamlit Dashboard** for real-time traffic analysis and risk visualization.
-- **Risk Assessment Engine** to compute composite security risk levels.
-- **Adaptive Mitigation Engine** to dynamically determine defense actions based on risk levels.
-- **Dynamic Live Monitoring Engine (`live_monitor.py`)** to stream and analyze datasets batch-by-batch in real time.
-- **Detection History Tracking** for auditing past scans with mitigation logs.
-- **PDF Report Generation** for downloadable security summaries including mitigation recommendations.
-
-The system analyzes network traffic datasets, identifies malicious DDoS attacks with high accuracy, provides actionable insights into model decision-making, recommends automated mitigation strategies, and supports dynamic live monitoring.
+An intelligent, enterprise-grade **Cyber Security Operations Center (SOC) Defense Dashboard** and automated mitigation system. It combines supervised gradient boosting, unsupervised zero-day anomaly detection, per-capture **Explainable AI (SHAP)**, autonomous adaptive countermeasures, and real-time micro-batch stream monitoring into a unified high-performance application.
 
 ---
 
-## 🎯 Key Objectives
-- **DDoS Attack Detection:** Accurately identify attack patterns in high-volume network traffic.
-- **Traffic Classification:** Categorize records as **Normal** or **Attack**.
-- **Anomaly Detection:** Flag novel or unseen zero-day network anomalies.
-- **Risk Assessment:** Provide a unified risk score and risk level assessment.
-- **Adaptive Mitigation:** Recommend and simulate real-time countermeasures (Rate Limiting, Traffic Blocking, Emergency Defense).
-- **Dynamic Live Monitoring:** Stream uploaded datasets in 100-record batches every 2 seconds with live UI filename display.
-- **Visual Analytics:** Offer interactive charts and data distribution previews.
-- **Audit & History:** Store past detection logs and mitigation actions locally for historical reporting.
-- **Report Generation:** Export concise PDF security reports containing telemetry and mitigation details.
+## 📌 Key Capabilities
+
+- **Dual-Model ML Threat Engine:**
+  - **Supervised XGBoost Classifier:** Detects known multi-vector DDoS attack patterns with **99.96% - 99.97% accuracy**.
+  - **Unsupervised Isolation Forest:** Detects novel, zero-day network anomalies and volumetric spikes.
+- **Dynamic Explainable AI (SHAP TreeExplainer):**
+  - Evaluates the marginal contribution of all 77 network flow features dynamically for each uploaded dataset.
+  - Switches seamlessly between **Dynamic Per-Dataset Attribution** and **Global Model Baseline**.
+  - Highlights exact attack signatures (e.g., SYN/ACK flag abnormalities, packet length deviations, window size anomalies).
+- **Modern Cyberpunk / SOC Dashboard:**
+  - Glassmorphic dark aesthetic (`Plus Jakarta Sans` & `JetBrains Mono` typography, radial cyan/purple glows, live radar pings).
+  - Dynamic top KPI cards that dynamically recalculate upon dataset ingestion.
+  - Convenient file drag-and-drop ingestion directly below the metrics bar.
+- **Unified In-App Real-Time Live Monitor:**
+  - Both **Deep Threat Inspection** and **Real-Time Live Monitor** run inside `streamlit run app.py`—no need to launch multiple terminals.
+  - Micro-batch streaming (50 to 500 packets every 2 seconds) with Pause/Resume, Restart, and live stream inspection tables.
+- **Adaptive Mitigation Engine:**
+  - Real-time mapping of threat severity to active countermeasures: *Monitor Traffic*, *Rate Limiting*, *Block Malicious Sources*, and *Emergency Defense*.
+  - Interactive simulation toggle to demonstrate automated defense rule deployment.
+- **Forensics & Audit Trail:**
+  - Historical scan logging in `data/history.csv` with schema-safe migration.
+  - One-click executive PDF Threat Intelligence Report generator.
 
 ---
 
 ## 🏗️ System Architecture
+
 ```text
-                       ┌─────────────────────────┐
-                       │  Network Traffic Data   │
-                       └────────────┬────────────┘
-                                    │
-                                    ▼
-                       ┌─────────────────────────┐
-                       │   Data Preprocessing    │
-                       └────────────┬────────────┘
-                                    │
-            ┌───────────────────────┴───────────────────────┐
-            │                                               │
-            ▼                                               ▼
-┌───────────────────────┐                       ┌───────────────────────┐
-│  XGBoost Classifier   │                       │   Isolation Forest    │
-└───────────┬───────────┘                       └───────────┬───────────┘
-            │                                               │
-            ▼                                               ▼
-┌───────────────────────┐                       ┌───────────────────────┐
-│ Attack / Normal Count │                       │     Anomaly Count     │
-└───────────┬───────────┘                       └───────────┬───────────┘
-            │                                               │
-            └───────────────────────┬───────────────────────┘
-                                    │
-                                    ▼
-                       ┌─────────────────────────┐
-                       │  Risk Assessment Engine │
-                       └────────────┬────────────┘
-                                    │
-                                    ▼
-                       ┌─────────────────────────┐
-                       │ Adaptive Mitigation Engine
-                       └────────────┬────────────┘
-                                    │
-            ┌───────────────────────┴───────────────────────┐
-            │                                               │
-            ▼                                               ▼
-┌───────────────────────┐                       ┌───────────────────────┐
-│ Main App (app.py)     │                       │ Live Monitor          │
-│ Full Dataset Analysis │                       │ (live_monitor.py)     │
-└───────────┬───────────┘                       │ 2s Batch Streaming    │
-            │                                   └───────────┬───────────┘
-            │                                               │
-            └───────────────────────┬───────────────────────┘
-                                    │
-                                    ▼
-                       ┌─────────────────────────┐
-                       │   Streamlit Dashboard   │
-                       └────────────┬────────────┘
-                                    │
-                      ┌─────────────┴─────────────┐
-                      │                           │
-                      ▼                           ▼
-          ┌───────────────────────┐   ┌───────────────────────┐
-          │ Interactive Analytics │   │  PDF Security Report  │
-          └───────────────────────┘   └───────────────────────┘
+                               ┌─────────────────────────────────┐
+                               │   Network Traffic Ingestion     │
+                               │ (.csv / .parquet captures)      │
+                               └───────────────┬─────────────────┘
+                                               │
+                                               ▼
+                               ┌─────────────────────────────────┐
+                               │   Preprocessing & Alignment     │
+                               └───────────────┬─────────────────┘
+                                               │
+                       ┌───────────────────────┴───────────────────────┐
+                       │                                               │
+                       ▼                                               ▼
+         ┌───────────────────────────┐                   ┌───────────────────────────┐
+         │     XGBoost Classifier    │                   │      Isolation Forest     │
+         │ (Supervised Classification)                   │  (Unsupervised Anomaly)   │
+         └─────────────┬─────────────┘                   └─────────────┬─────────────┘
+                       │                                               │
+                       ▼                                               ▼
+         ┌───────────────────────────┐                   ┌───────────────────────────┐
+         │   Attack / Normal Counts  │                   │    Zero-Day Anomalies     │
+         └─────────────┬─────────────┘                   └─────────────┬─────────────┘
+                       │                                               │
+                       └───────────────────────┬───────────────────────┘
+                                               │
+                                               ▼
+                               ┌─────────────────────────────────┐
+                               │     Risk Assessment Engine      │
+                               │  Composite Weighted Threat %    │
+                               └───────────────┬─────────────────┘
+                                               │
+                                               ▼
+                               ┌─────────────────────────────────┐
+                               │    Adaptive Mitigation Engine   │
+                               │ (Dynamic Defense Action Mapping)│
+                               └───────────────┬─────────────────┘
+                                               │
+                       ┌───────────────────────┴───────────────────────┐
+                       │                                               │
+                       ▼                                               ▼
+         ┌───────────────────────────┐                   ┌───────────────────────────┐
+         │  🛡️ Deep Threat Console    │                   │   📡 Live Stream Radar    │
+         │  • Dynamic KPI Telemetry  │                   │  • 2s Auto-Refresh Stream │
+         │  • Dynamic SHAP XAI Bars  │                   │  • Pause / Resume Control │
+         │  • Flow Donut & Risk Gauge│                   │  • Batch Risk Telemetry   │
+         │  • Forensic Audit & PDF   │                   │  • Live Packet Table      │
+         └─────────────┬─────────────┘                   └─────────────┬─────────────┘
+                       │                                               │
+                       └───────────────────────┬───────────────────────┘
+                                               │
+                                               ▼
+                               ┌─────────────────────────────────┐
+                               │ Unified Web Dashboard (app.py)  │
+                               │      http://localhost:8501      │
+                               └─────────────────────────────────┘
 ```
 
 ---
 
-## 🛠️ Technologies Used
-| Technology | Purpose |
-| :--- | :--- |
-| **Python** | Backend logic and machine learning pipelines |
-| **Streamlit** | Interactive dashboard user interface & auto-refreshed live streaming |
-| **Pandas & PyArrow** | High-performance dataset processing and Parquet handling |
-| **XGBoost** | Supervised DDoS attack classification |
-| **Scikit-Learn** | Anomaly detection (`IsolationForest`) & model evaluation metrics |
-| **Plotly** | Dynamic visual analytics and interactive charts |
-| **Joblib** | Serialization and loading of trained ML models |
-| **FPDF** | Automated PDF report generation |
-| **CIC-DDoS2019** | Standard benchmark dataset for training and evaluation |
+## 🛠️ Technology Stack
+
+| Layer | Component | Description |
+| :--- | :--- | :--- |
+| **Backend & Logic** | **Python 3.10+** | Core data science and ML runtime |
+| **Web Interface** | **Streamlit** | High-performance interactive SOC dashboard |
+| **Supervised ML** | **XGBoost 2.0+** | Gradient boosted decision trees for binary traffic classification |
+| **Unsupervised ML**| **Scikit-Learn** | `IsolationForest` for zero-day anomaly detection |
+| **Explainable AI** | **SHAP** | `TreeExplainer` computing marginal per-flow feature attribution |
+| **Stream Engine** | **streamlit-autorefresh** | Dynamic clock for automated micro-batch live streaming |
+| **Data Engine** | **Pandas & PyArrow** | High-throughput columnar Parquet and CSV processing |
+| **Visualization** | **Plotly Graph Objects** | Interactive dark-themed gauges, donuts, and attribution charts |
+| **Reporting** | **FPDF** | Automated incident summary and forensic report PDF generation |
+| **Benchmark Suite**| **CIC-DDoS2019** | Standardized realistic multi-vector DDoS attack benchmark |
 
 ---
 
 ## 📂 Project Structure
+
 ```text
-ddos-project/
+DDoS/
 │
 ├── data/
-│   ├── combined_dataset.parquet   # Processed combined benchmark dataset
-│   ├── active_target.parquet      # Synchronized active target dataset for live_monitor.py
-│   ├── active_target_name.txt     # Stored name of currently uploaded dataset file
-│   ├── history.csv                # Historical detection audit logs (includes risk level & mitigation)
-│   └── *.parquet                  # Raw & subset dataset files (e.g. LDAP-training, TFTP-testing)
+│   ├── combined_dataset.parquet   # Combined multi-vector benchmark dataset
+│   ├── active_target.parquet      # Synchronized target dataset for live stream
+│   ├── active_target_name.txt     # Target filename tracker
+│   ├── history.csv                # Persistent audit log (risk scores & mitigation)
+│   └── *-testing.parquet          # Vector samples (LDAP, DNS, Syn, MSSQL, TFTP, etc.)
 │
 ├── models/
-│   ├── xgboost_ddos_model.pkl     # Trained XGBoost classifier
-│   └── anomaly_detector.pkl       # Trained Isolation Forest model
+│   ├── xgboost_ddos_model.pkl     # Trained supervised XGBoost classifier
+│   └── anomaly_detector.pkl       # Trained unsupervised Isolation Forest model
 │
 ├── src/
-│   ├── train_xgboost.py           # Script to train XGBoost model
-│   ├── anomaly_detection.py       # Script to train Isolation Forest model
-│   ├── combine_datasets.py        # Utility to aggregate raw dataset files
-│   ├── explain.py                 # Feature importance and explainability logic
-│   ├── inspect_data.py            # Dataset inspection tool
-│   ├── risk_engine.py             # Risk calculation helper
-│   └── mitigation_engine.py       # Adaptive mitigation rule engine
+│   ├── train_xgboost.py           # Supervised model training pipeline
+│   ├── anomaly_detection.py       # Isolation Forest anomaly training pipeline
+│   ├── combine_datasets.py        # Parquet concatenation and aggregation script
+│   ├── explain.py                 # SHAP TreeExplainer baseline prototype
+│   ├── inspect_data.py            # Quick dataset schema & null-value inspection
+│   └── mitigation_engine.py       # Adaptive response rule mapping engine
 │
-├── app.py                         # Main Streamlit web dashboard application
-├── live_monitor.py                # Simulated live network traffic monitor (synchronized with app.py)
-├── requirements.txt               # Python package dependencies
-└── README.md                      # Project documentation
+├── app.py                         # Unified Cyber SOC Dashboard & Live Monitor
+├── live_monitor.py                # Standalone live stream monitor (optional)
+├── requirements.txt               # Project Python package dependencies
+└── README.md                      # Comprehensive project documentation
 ```
 
 ---
 
-## 📊 Dataset Information
-This framework uses the **CIC-DDoS2019 Dataset**, a standard benchmark for DDoS attack detection containing modern network attack profiles.
+## 📊 Dataset & Feature Characteristics
 
-### Covered Attack Types:
-- **Normal Traffic**
-- **DNS Attack**
-- **LDAP Attack**
-- **MSSQL Attack**
-- **NetBIOS Attack**
-- **NTP Attack**
-- **SNMP Attack**
-- **SYN Flood Attack**
-- **TFTP Attack**
-- **UDP Attack**
-- **UDP-Lag Attack**
+The system is trained and evaluated on the **CIC-DDoS2019** dataset, covering modern realistic application-layer and network-layer attacks:
 
-### Key Features (77 Total Features):
-- **Flow Duration & Timestamps**
-- **Packet Length Statistics** (Min, Max, Mean, Std)
-- **Flow Rates:** Flow Bytes/s, Flow Packets/s
-- **Directional Counts:** Fwd Packets, Bwd Packets
-- **Packet Header & Flag Statistics**
-- **Network Protocol Information**
+### Evaluated Attack Profiles
+* **Normal / Benign Traffic**
+* **SYN Flood Attack**
+* **DNS Amplification Attack**
+* **LDAP Reflection Attack**
+* **MSSQL Attack**
+* **NetBIOS Attack**
+* **NTP Amplification Attack**
+* **SNMP Attack**
+* **TFTP Attack**
+* **UDP Flood Attack**
+* **UDP-Lag Attack**
 
----
-
-## 🤖 Machine Learning Models
-
-### 1. XGBoost Classifier (Supervised Classification)
-- **Purpose:** Classifies incoming traffic into **Normal (0)** or **DDoS Attack (1)**.
-- **Model Configuration:**
-  - `n_estimators`: 100
-  - `max_depth`: 6
-  - `learning_rate`: 0.1
-  - `eval_metric`: `logloss`
-- **Performance Metrics:**
-  - **Accuracy:** `99.96%`
-  - **Precision:** `1.00`
-  - **Recall:** `1.00`
-  - **F1-Score:** `1.00`
-
-### 2. Isolation Forest (Unsupervised Anomaly Detection)
-- **Purpose:** Flags zero-day anomalies and outliers in network traffic patterns.
-- **Model Configuration:**
-  - `contamination`: `0.05` (5% expected anomaly rate)
-  - `random_state`: `42`
+### Key Flow Features (77 Total Features)
+* **Temporal Attributes:** Flow Duration, Flow IAT (Mean, Std, Min, Max), Forward/Backward IAT
+* **Packet Statistics:** Packet Length (Min, Max, Mean, Std), Average Packet Size, Segment Size
+* **Volumetric Rates:** Flow Packets/s, Flow Bytes/s, Forward Packets/s, Backward Packets/s
+* **Protocol & Flags:** Protocol, FIN, SYN, RST, PSH, ACK, URG, ECE, CWR Flags
+* **TCP Windowing:** Init Forward Win Bytes, Init Backward Win Bytes, Active/Idle Time
 
 ---
 
-## 📈 Dashboard & Features
+## 🤖 Model Performance & Evaluation
 
-### 1. Dataset Preview & Telemetry
-- Previews the first 5 records of uploaded CSV or Parquet files.
-- Displays total row count and feature column count.
+### 1. Supervised XGBoost Classifier
+* **Architecture:** 100 Gradient Boosted Decision Trees, Max Depth = 6, Learning Rate = 0.1
+* **Objective:** Binary cross-entropy with `logloss` evaluation metric
+* **Performance:**
+  * **Accuracy:** `99.96% - 99.97%`
+  * **Precision:** `1.00`
+  * **Recall:** `1.00`
+  * **F1-Score:** `1.00`
 
-### 2. Detection Results
-- Real-time count of **Attack Records**, **Normal Records**, and detected **Anomalies**.
+### 2. Unsupervised Isolation Forest
+* **Purpose:** Detects zero-day anomalies that deviate from typical flow distributions without requiring attack labels
+* **Hyperparameters:** `contamination=0.05` (5% expected anomaly rate), `random_state=42`
+
+---
+
+## 📈 Dashboard Capabilities
+
+### 1. Dynamic Executive KPI Telemetry
+Four glassmorphic status cards at the top of the dashboard recalculate dynamically based on the active dataset:
+* **Inspected Flows:** Total packet flows evaluated.
+* **Detected Attacks:** Volume and percentage of malicious DDoS flows.
+* **Normal Baseline:** Volume and percentage of legitimate network traffic.
+* **Threat Risk Index:** Dynamic composite risk rating with color-coded severity badges.
+
+### 2. Streamlined Ingestion Station
+Positioned directly below the metrics bar, supporting:
+* **📁 Upload Capture File:** Drag-and-drop `.csv` or `.parquet` captures up to 200MB.
+* **🚀 Quick Load Benchmark:** One-click instant loader for all pre-packaged CIC-DDoS vectors (`LDAP`, `DNS`, `Syn`, `MSSQL`, etc.).
 
 ### 3. Risk Assessment Engine
-Calculates a composite risk score weighted by attack volume and anomaly severity:
-$$\text{Risk Score} = \left(\frac{\text{Attack Count}}{\text{Total Records}} \times 70\right) + \left(\frac{\text{Anomaly Count}}{\text{Total Records}} \times 30\right)$$
+Computes a composite security risk index weighted by malicious flow volume and unsupervised anomaly severity:
 
-#### Risk Level Breakdown:
-| Risk Score Range (%) | Risk Level | Dashboard Indicator |
+$$\text{Risk Score} = \left(\frac{\text{Attack Count}}{\text{Total Flows}} \times 70\right) + \left(\frac{\text{Anomaly Count}}{\text{Total Flows}} \times 30\right)$$
+
+| Risk Score (%) | Classification | SOC Badge |
 | :---: | :---: | :---: |
-| `0 - 25%` | **Low** | 🟢 Low Risk |
-| `25 - 50%` | **Medium** | 🟡 Medium Risk |
-| `50 - 75%` | **High** | 🟠 High Risk |
-| `75 - 100%` | **Critical** | 🔴 Critical Risk |
+| `0% - 25%` | **Low Risk** | 🟢 Normal Behavior Verified |
+| `25% - 50%` | **Medium Risk** | 🟡 Suspicious Bursts Detected |
+| `50% - 75%` | **High Risk** | 🟠 Volumetric Assault In Progress |
+| `75% - 100%` | **Critical Risk** | 🔴 Catastrophic Distributed DDoS |
 
 ### 4. Adaptive Mitigation Engine ⚡
-Determines and displays automated mitigation responses corresponding to the evaluated risk level:
+Automatically determines and displays defense actions corresponding to the risk level:
 
-| Risk Level | Recommended Action | Description | Severity | Dashboard Banner |
-| :--- | :--- | :--- | :--- | :--- |
-| **Low** | **Monitor Traffic** | Continue monitoring network activity. | `Low` | `st.success()` |
-| **Medium** | **Rate Limiting** | Apply traffic throttling to suspicious traffic. | `Medium` | `st.warning()` |
-| **High** | **Block Suspicious Traffic** | Simulate blocking malicious traffic sources. | `High` | `st.error()` |
-| **Critical** | **Emergency Defense** | Simulate blocking traffic and triggering security alerts. | `Critical` | `st.error()` |
+| Risk Level | Recommended Action | Description | SOC Defense Action |
+| :--- | :--- | :--- | :--- |
+| **Low** | **Monitor Traffic** | Continue routine network telemetry logging. | Passive Monitoring |
+| **Medium** | **Rate Limiting** | Apply flow throttling to suspicious IP source clusters. | Packet Throttling |
+| **High** | **Block Suspicious Traffic** | Dynamic firewall drops matching attack flow signatures. | ACL Signature Drop |
+| **Critical** | **Emergency Defense** | Upstream BGP route filtering & scrubbing center redirection. | BGP Blackholing / Scrubbing |
 
-- **Interactive Defense Toggle:** Includes an **"Enable Adaptive Mitigation"** checkbox that simulates real-time defense enforcement and provides active alert status notifications.
+*Includes an interactive **"Engage Autonomous Adaptive Mitigation Rules"** checkbox to simulate real-time defense enforcement.*
 
-### 5. Dynamic Live Stream Monitoring (`live_monitor.py`) 📡
-- **Dataset Synchronization:** Automatically streams whichever dataset file you select in `app.py` (e.g. `LDAP-training.parquet`, `TFTP-testing.parquet`).
-- **UI Filename Header:** Prominently displays the exact name of the file being monitored:
-  `📁 Currently Monitoring File: LDAP-training.parquet (Uploaded File) | 📊 Total Records: 6,715`
-- **Auto-Refresh Streaming:** Streams 100-record batches every 2 seconds.
-- **Batch Adaptive Mitigation:** Evaluates and updates mitigation alert banners dynamically for each streaming batch.
+### 5. Dynamic Explainable AI (SHAP TreeExplainer) 🔬
+Provides interpretable insights into model decision-making:
+* **⚡ Dynamic SHAP Attribution:** Computes exact marginal feature importance for the uploaded file, revealing the specific attributes driving attack classifications (e.g., `ACK Flag Count` for SYN floods vs. `Packet Length Min` for LDAP reflection).
+* **🌐 Global Model Baseline:** Allows toggling to view overall XGBoost Gini Gain weights learned during training.
+* **Forensic Attribution Insights:** Highlights the **Primary**, **Secondary**, and **Tertiary** attack drivers with numeric attribution scores.
 
-### 6. Interactive Visualizations
-- **Traffic Distribution:** Pie chart breaking down Attack, Normal, and Anomaly traffic.
-- **Risk Score Analysis:** Bar chart displaying the calculated threat score.
-- **Feature Importance Chart:** Horizontal bar chart highlighting top features driving model predictions.
+### 6. Unified Real-Time Live Monitor 📡
+Switch to **Real-Time Live Monitor** in the sidebar console to simulate continuous network packet streaming:
+* Direct file uploader and sample selector inside the live view.
+* Micro-batch streaming (50 to 500 packets every 2 seconds).
+* **⏸️ Pause / Resume:** Freeze stream inspection at any time.
+* **🔄 Restart:** Reset stream pointer back to packet 0.
+* Dynamic batch telemetry cards, mitigation directives, and live stream inspection tables.
 
-### 7. Detection History Tracking
-- Automatically records scan logs into `data/history.csv`.
-- Logs timestamp, attack counts, normal counts, anomaly counts, risk score, **risk level**, and **mitigation action**.
-- Displays recent scan history table in the dashboard.
-
-### 8. PDF Report Generation
-- Exports a downloadable `.pdf` summary report containing scan telemetry, risk score, risk level, **mitigation action**, **mitigation description**, and generation timestamp.
+### 7. Audit Trail & Executive Forensic PDF Report
+* Scans are automatically logged to `data/history.csv` with timestamps, counts, risk scores, and mitigation actions.
+* One-click **Download Incident Forensic Report (PDF)** generates an executive PDF summary for security auditing.
 
 ---
 
@@ -247,60 +252,59 @@ Determines and displays automated mitigation responses corresponding to the eval
 
 ### 1. Clone the Repository
 ```bash
-git clone <repository-url>
-cd ddos-project
+git clone https://github.com/Varun-bharathi/DDoS.git
+cd DDoS
 ```
 
 ### 2. Install Dependencies
-Install all required libraries using `requirements.txt`:
 ```bash
 pip install -r requirements.txt
 ```
-*Or manually install individual dependencies:*
+
+*Or install required packages manually:*
 ```bash
-pip install streamlit pandas pyarrow xgboost scikit-learn plotly joblib fpdf streamlit-autorefresh
+pip install streamlit pandas pyarrow xgboost scikit-learn plotly joblib fpdf streamlit-autorefresh shap
 ```
 
 ---
 
 ## ▶️ Running the Application
 
-### Step 1: Train Models (Optional)
-If you wish to retrain the machine learning models on updated data:
-```bash
-python src/train_xgboost.py
-python src/anomaly_detection.py
-```
-
-### Step 2: Launch Dashboard
-Run the unified Streamlit application:
+### Launch the Unified Dashboard (Recommended)
 ```bash
 streamlit run app.py
 ```
 Open your browser and navigate to `http://localhost:8501`.
 
-You can now toggle between **🛡️ Deep Threat Inspection** and **📡 Real-Time Live Monitor** directly from the sidebar console without needing a second terminal!
+* **To run full threat inspection:** Keep the sidebar console set to **`🛡️ Deep Threat Inspection`**. Upload or select a dataset and click **🚀 Run AI Threat Inspection**.
+* **To monitor real-time packet streams:** Switch the sidebar console to **`📡 Real-Time Live Monitor`**. No separate terminal required!
 
 *(Optional standalone launch: `streamlit run live_monitor.py` on port 8502 remains supported).*
 
 ---
 
-## 📋 Application Workflow
-1. **Upload Dataset:** Select a network traffic dataset (e.g. `LDAP-training.parquet`) in `app.py`.
-2. **Preview Data:** Verify dataset columns and record counts.
-3. **Run Detection:** Click **🚀 Detect Attack** to execute predictions on the complete dataset.
-4. **Review Adaptive Mitigation:** Inspect recommended mitigation actions and toggle **Enable Adaptive Mitigation** to simulate real-time enforcement.
-5. **Stream Live Traffic:** Open `live_monitor.py` (`streamlit run live_monitor.py`) to watch the uploaded file (`LDAP-training.parquet`) stream live in 100-record batches every 2 seconds with dynamic UI filename tracking.
-6. **Analyze Charts:** Inspect pie charts, risk bar charts, and feature importance graphs.
-7. **Audit Detection History:** Review historical scan records with logged risk levels and mitigation actions.
-8. **Download Report:** Click **⬇ Download PDF Report** to save a timestamped summary including mitigation details.
+## 📋 Standard Workflow
+
+1. **Launch App:** Run `streamlit run app.py` and access the dashboard.
+2. **Ingest Traffic:** Drag and drop a `.csv` or `.parquet` capture, or select a pre-packaged benchmark sample (e.g. `LDAP-testing.parquet`).
+3. **Execute AI Threat Inspection:** Click **🚀 Run AI Threat Inspection** to trigger dual-model inference and SHAP attribution.
+4. **Inspect Threat Intelligence Cockpit:**
+   * **Tab 1:** Review incident severity, dynamic risk score, and toggle adaptive mitigation.
+   * **Tab 2:** Examine flow composition donuts and the semicircular risk gauge.
+   * **Tab 3:** Explore dynamic SHAP feature attributions and forensic attack driver cards.
+   * **Tab 4:** Review detection audit history and export the timestamped **Forensic PDF Report**.
+5. **Simulate Live Streaming:** Switch to **📡 Real-Time Live Monitor** in the sidebar to stream the capture batch-by-batch with auto-updating countermeasures.
 
 ---
 
 ## 📌 Future Enhancements
-- 📡 **Real-Time Packet Sniffing:** Live network capture using `Scapy` / `Pyshark`.
-- 🔍 **SHAP Integration:** Deep explainability visualizations for individual traffic flows.
-- 🎯 **Multi-Class Classification:** Granular identification of specific attack types (SYN, UDP, NTP).
-- 📧 **Automated Alerting:** Email / Slack notifications upon detecting Critical risk levels.
-- ☁️ **Cloud Deployment:** Containerization with Docker and deployment on AWS / GCP.
-- 🛡️ **SOC Dashboard Integration:** Integration with SIEM platforms (Splunk, Elastic Stack).
+
+- 📡 **Real-Time Packet Sniffing:** Live interface capturing via `Scapy` / `Pyshark`.
+- 🎯 **Multi-Class Attack Identification:** Granular classification distinguishing exact attack types (e.g. distinguishing SYN from NTP).
+- 📧 **Automated SIEM & Alert Integration:** Webhook, Slack, and email notifications for High/Critical threat events.
+- ☁️ **Containerized Cloud Deployment:** Dockerization with deployment manifests for AWS / Azure / GCP.
+
+---
+
+## 📄 License
+This project is licensed under the [MIT License](LICENSE).
