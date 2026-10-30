@@ -272,19 +272,16 @@ python src/train_xgboost.py
 python src/anomaly_detection.py
 ```
 
-### Step 2: Launch Main Dashboard
-Run the main Streamlit application:
+### Step 2: Launch Dashboard
+Run the unified Streamlit application:
 ```bash
 streamlit run app.py
 ```
 Open your browser and navigate to `http://localhost:8501`.
 
-### Step 3: Launch Live Monitor (Optional)
-Run the simulated live monitoring dashboard in a separate terminal:
-```bash
-streamlit run live_monitor.py
-```
-Open your browser and navigate to `http://localhost:8502`.
+You can now toggle between **🛡️ Deep Threat Inspection** and **📡 Real-Time Live Monitor** directly from the sidebar console without needing a second terminal!
+
+*(Optional standalone launch: `streamlit run live_monitor.py` on port 8502 remains supported).*
 
 ---
 
